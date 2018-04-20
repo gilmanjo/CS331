@@ -53,7 +53,7 @@ class PuzzleState(object):
 				0 if not self.boat_left else 1,
 				self.rb_chickens,
 				self.rb_wolves,
-				0 if self.boat left, else 1))
+				0 if self.boat_left else 1))
 
 class Node(object):
 	"""represents a possible state and the result of some particular action,
@@ -105,12 +105,12 @@ class Node(object):
 		Returns:
 			True if the action is valid
 		"""
-		if ps.lb_chickens < 0 \
-			or ps.rb_chickens < 0 \
-			or ps.lb_wolves < 0 \
-			or ps.rb_wolves < 0 \
-			or ps.lb_chickens < ps.lb_wolves \
-			or ps.rb_chickens < rb.wolves:
+		if int(ps.lb_chickens) < 0 \
+			or int(ps.rb_chickens) < 0 \
+			or int(ps.lb_wolves) < 0 \
+			or int(ps.rb_wolves) < 0 \
+			or int(ps.lb_chickens) < int(ps.lb_wolves) \
+			or int(ps.rb_chickens) < int(ps.rb_wolves):
 
 			return False
 
@@ -128,84 +128,84 @@ class Node(object):
 		Raises:
 			ValueError if the action is not within the Action enumeration
 		"""
-		new_state = self.ps
+		new_state = self.state
 
-		if action == Action.ONE_CHICKEN:
+		if action == Action.ONE_CHICKEN.value:
 			
-			if self.ps.boat_left:
+			if self.state.boat_left:
 
 				new_state.boat_left = False
-				new_state.lb_chickens -= 1
-				new_state.rb_chickens += 1
+				new_state.lb_chickens = int(new_state.lb_chickens) + 1
+				new_state.rb_chickens = int(new_state.rb_chickens) + 1
 
 			else:
 
 				new_state.boat_left = True
-				new_state.rb_chickens -= 1
-				new_state.lb_chickens += 1
+				new_state.rb_chickens = int(new_state.rb_chickens) - 1
+				new_state.lb_chickens = int(new_state.lb_chickens) + 1
 
-		elif action == Action.TWO_CHICKENS:
+		elif action == Action.TWO_CHICKENS.value:
 				
-			if self.ps.boat_left:
+			if self.state.boat_left:
 
 				new_state.boat_left = False
-				new_state.lb_chickens -= 2
-				new_state.rb_chickens += 2
+				new_state.lb_chickens = int(new_state.lb_chickens) - 2
+				new_state.rb_chickens = int(new_state.rb_chickens) + 2
 
 			else:
 
 				new_state.boat_left = True
-				new_state.rb_chickens -= 2
-				new_state.lb_chickens += 2
+				new_state.rb_chickens = int(new_state.rb_chickens) - 2
+				new_state.lb_chickens = int(new_state.lb_chickens) + 2
 
-		elif action == Action.ONE_WOLF:
+		elif action == Action.ONE_WOLF.value:
 				
-			if self.ps.boat_left:
+			if self.state.boat_left:
 
 				new_state.boat_left = False
-				new_state.lb_wolves -= 1
-				new_state.rb_wolves += 1
+				new_state.lb_wolves = int(new_state.lb_wolves) - 1
+				new_state.rb_wolves = int(new_state.rb_wolves) + 1
 
 			else:
 
 				new_state.boat_left = True
-				new_state.rb_wolves -= 1
-				new_state.lb_wolves += 1
+				new_state.rb_wolves = int(new_state.rb_wolves) - 1
+				new_state.lb_wolves = int(new_state.lb_wolves) + 1
 
-		elif action == Action.ONE_WOLF_ONE_CHICKEN:
+		elif action == Action.ONE_WOLF_ONE_CHICKEN.value:
 				
-			if self.ps.boat_left:
+			if self.state.boat_left:
 
 				new_state.boat_left = False
-				new_state.lb_chickens -= 1
-				new_state.rb_chickens += 1
-				new_state.lb_wolves -= 1
-				new_state.rb_wolves += 1
+				new_state.lb_chickens = int(new_state.lb_chickens) - 1
+				new_state.rb_chickens = int(new_state.rb_chickens) + 1
+				new_state.lb_wolves = int(new_state.lb_wolves) + 1
+				new_state.rb_wolves = int(new_state.rb_wolves) + 1
 
 			else:
 
 				new_state.boat_left = True
-				new_state.rb_chickens -= 1
-				new_state.lb_chickens += 1
-				new_state.lb_wolves -= 1
-				new_state.rb_wolves += 1
+				new_state.rb_chickens = int(new_state.rb_chickens) - 1
+				new_state.lb_chickens = int(new_state.lb_chickens) + 1
+				new_state.lb_wolves = int(new_state.lb_wolves) - 1
+				new_state.rb_wolves = int(new_state.rb_wolves) + 1
 
-		elif action == Action.TWO_WOLVES:
+		elif action == Action.TWO_WOLVES.value:
 				
-			if self.ps.boat_left:
+			if self.state.boat_left:
 
 				new_state.boat_left = False
-				new_state.lb_wolves -= 2
-				new_state.rb_wolves += 2
+				new_state.lb_wolves = int(new_state.lb_wolves) - 2
+				new_state.rb_wolves = int(new_state.rb_wolves) + 2
 
 			else:
 
 				new_state.boat_left = True
-				new_state.rb_wolves -= 2
-				new_state.lb_wolves += 2
+				new_state.rb_wolves = int(new_state.rb_wolves) - 2
+				new_state.lb_wolves = int(new_state.lb_wolves) + 2
 
 		else:
-			raise(ValueError, "Invalid Action!")
+			raise ValueError("Invalid Action!")
 
 		return new_state
 
@@ -254,6 +254,74 @@ class Node(object):
 				f.writelines(writeable_history)
 
 def main():
+	
+	# assign command-line arguments
+	input_state = load_puz_state(sys.argv[1])
+	goal_state = load_puz_state(sys.argv[2])
+	mode = sys.argv[3]
+	output_file_loc = sys.argv[4]
+
+	if mode == "bfs":
+		bfs(input_state, goal_state, output_file_loc)
+
+	elif mode == "dfs":
+		dfs(input_state, goal_state, output_file_loc)
+
+	elif mode == "iddfs":
+		iddfs(input_state, goal_state, output_file_loc)
+
+	elif mode == "astar":
+		astar(input_state, goal_state, output_file_loc)
+
+	else:
+		raise ValueError("Invalid argument for mode!")
+
+def bfs(input_state, goal_state, output_file_loc):
+	
+	# initialize queue with initial node from initial state
+	queue = []
+	explored = []
+	initial_node = Node(input_state, None, None)
+	queue.append(initial_node)
+	initial_node.state.print_puz_state()
+
+	while True:
+
+		# exit if no solution was found
+		if len(queue) == 0:
+			with open(output_file_loc, "w") as f:
+				f.write("No solution found.")
+			break
+
+		# pop a node from the front of the queue
+		current_node = queue.pop(0)
+		current_node.state.print_puz_state()
+		print()
+
+		# check if node is our goal
+		if is_goal_state(current_node, goal_state):
+			current_node.print_path(output_file_loc)
+			break
+
+		# if not, expand
+		queue += current_node.expand_node()  # add children to queue
+		explored.append(current_node)
+
+def dfs(input_state, goal_state, output_file_loc):
+	
+	# initialize queue with initial node from initial state
+	queue = []
+	initial_node = Node(input_state, None, None)
+	queue.append(initial_node)
+
+def iddfs(input_state, goal_state, output_file_loc):
+	
+	# initialize queue with initial node from initial state
+	queue = []
+	initial_node = Node(input_state, None, None)
+	queue.append(initial_node)
+
+def astar(input_state, goal_state, output_file_loc):
 	pass
 
 def load_puz_state(fn):
@@ -273,7 +341,7 @@ def load_puz_state(fn):
 		for line in f:
 			raw_data.append(line.split(","))
 
-	new_ps = GameState()
+	new_ps = PuzzleState()
 	new_ps.lb_chickens = raw_data[0][0]
 	new_ps.rb_chickens = raw_data[1][0]
 	new_ps.lb_wolves = raw_data[0][1]
@@ -284,6 +352,28 @@ def load_puz_state(fn):
 		new_ps.boat_left = False
 
 	return new_ps
+
+def is_goal_state(node, gps):
+	""" checks if the current node matches the puzzle state provided
+
+	Args:
+		node - Node object to be evaluated
+		gps - goal puzzle state to compare with Node.state
+
+	Returns:
+		True if the states match
+
+	Raises:
+		(none)
+	"""
+	if node.state.lb_chickens == gps.lb_chickens \
+		and node.state.rb_chickens == gps.rb_chickens \
+		and node.state.lb_wolves == gps.lb_wolves \
+		and node.state.lb_chickens == gps.lb_chickens:
+
+		return True
+
+	return False
 
 if __name__ == '__main__':
 	main()

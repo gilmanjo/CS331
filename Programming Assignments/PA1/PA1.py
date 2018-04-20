@@ -31,6 +31,15 @@ class PuzzleState(object):
 		self.rb_wolves = 0
 		self.boat_left = True
 
+	def get_puzzle_state(self):
+		"""returns a numerical representation of the puzzle state
+		"""
+		return "{}{}{}{}{}".format(self.lb_chickens,
+									self.rb_chickens,
+									self.lb_wolves,
+									self.rb_wolves,
+									self.boat_left)
+
 	def print_puz_state(self, fancy=False):
 		"""prints the state of the puzzle to terminal
 
@@ -70,6 +79,7 @@ class Node(object):
 	def __init__(self, ps, parent, action, cost=0):
 		super(Node, self).__init__()
 		self.state = ps
+		self.state_history = [ps]
 		self.parent = parent
 		self.action = action
 		self.path_cost = cost
@@ -86,6 +96,8 @@ class Node(object):
 
 			new_node = Node(self.gen_ps(x), self, x, deepcopy(self.path_cost) + 1)
 			if self.is_valid_action(new_node.state):
+				new_node.state_history = new_node.parent.state_history + [new_node.state]
+				print(len(new_node.state_history))
 				children.append(new_node)
 
 		self.expanded = True
@@ -112,7 +124,7 @@ class Node(object):
 			or int(ps.rb_wolves) < 0 \
 			or (int(ps.lb_chickens) < int(ps.lb_wolves) and ps.lb_chickens > 0)\
 			or (int(ps.rb_chickens) < int(ps.rb_wolves) and ps.rb_chickens > 0)\
-			or (self.parent is not None and ps == self.parent.state):
+			or self.is_in_state_history(self.state_history, ps):
 			
 			return False
 
@@ -210,6 +222,14 @@ class Node(object):
 			raise ValueError("Invalid Action!")
 
 		return new_state
+
+	def is_in_state_history(self, sh, ps):
+
+		for state in sh:
+			if state.get_puzzle_state() == ps.get_puzzle_state():
+				return True
+
+		return False
 
 	def print_path(self, fn=None):
 		"""prints the complete history of actions leading to this node
@@ -313,8 +333,30 @@ def dfs(input_state, goal_state, output_file_loc):
 	
 	# initialize queue with initial node from initial state
 	queue = []
+	explored = []
 	initial_node = Node(input_state, None, None)
 	queue.append(initial_node)
+
+	while True:
+
+		# exit if no solution was found
+		if len(queue) == 0:
+			with open(output_file_loc, "w") as f:
+				f.write("No solution found.")
+			break
+
+		# pop a node from the front of the queue
+		current_node = queue.pop()
+
+		# check if node is our goal
+		if is_goal_state(current_node, goal_state):
+			current_node.print_path(output_file_loc)
+			break
+
+		# if not, expand
+		queue += current_node.expand_node()  # add children to queue
+		print("\ndepth: " + str(current_node.path_cost))
+		explored.append(current_node)
 
 def iddfs(input_state, goal_state, output_file_loc):
 	

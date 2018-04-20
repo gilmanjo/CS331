@@ -230,7 +230,7 @@ class Node(object):
 
 		return False
 
-	def print_path(self, fn=None):
+	def print_path(self,num_expanded, fn):
 		"""prints the complete history of actions leading to this node
 		
 		Args:
@@ -253,6 +253,12 @@ class Node(object):
 
 		action_history.reverse()
 		writeable_history = []
+
+		# append total number of expanded and the length of the solution
+		writeable_history.append("Total number of expanded nodes: {}\n".format(
+			num_expanded))
+		writeable_history.append("Length of solution: {}\n".format(
+			len(action_history)))
 
 		# transform list of enums into writable text
 		for idx, action in enumerate(action_history):
@@ -320,7 +326,7 @@ def bfs(input_state, goal_state, output_file_loc):
 
 		# check if node is our goal
 		if is_goal_state(current_node, goal_state):
-			current_node.print_path(output_file_loc)
+			current_node.print_path(len(explored), output_file_loc)
 			break
 
 		# if not, expand
@@ -349,7 +355,7 @@ def dfs(input_state, goal_state, output_file_loc):
 
 		# check if node is our goal
 		if is_goal_state(current_node, goal_state):
-			current_node.print_path(output_file_loc)
+			current_node.print_path(len(explored), output_file_loc)
 			break
 
 		# if not, expand
@@ -386,7 +392,7 @@ def iddfs(input_state, goal_state, output_file_loc):
 
 		# case the solution has been found
 		else:
-			problem[0].print_path(output_file_loc)
+			problem[0].print_path(len(explored), output_file_loc)
 			break
 
 def dls(input_state, goal_state, depth_limit, queue, explored):
@@ -402,8 +408,12 @@ def dls(input_state, goal_state, depth_limit, queue, explored):
 
 	while True:
 
-		# exit if no solution was found
-		if len(queue) == 0:
+		# check if we're ready to try the next depth level
+		if len(queue) == 0 and len(final_lvl) != 0:
+			return (0, final_lvl, explored)
+
+		# if queue and final level are both empty, there's no solution
+		elif len(queue) == 0:
 			return (-1, queue, explored)
 
 		# pop a node from the front of the queue
@@ -413,14 +423,9 @@ def dls(input_state, goal_state, depth_limit, queue, explored):
 		if is_goal_state(current_node, goal_state):
 			return (current_node, queue, explored)
 
-		# if not, check if we are allowed to expand
-		if current_node.path_cost == depth_limit and len(queue) == 0:
-			final_lvl.append(current_node)  # re-add current node
-			return (0, final_lvl, explored)
-
 		# saving the deepest level of our tree saves redunandcy in re-checking
 		# all of the early, non-solution nodes
-		elif current_node.path_cost == depth_limit:
+		if current_node.path_cost == depth_limit:
 			final_lvl.append(current_node)
 
 		else:
@@ -428,7 +433,53 @@ def dls(input_state, goal_state, depth_limit, queue, explored):
 			explored.append(current_node)
 
 def astar(input_state, goal_state, output_file_loc):
-	pass
+	"""A* informed search algorithm (best-first search)
+	"""
+
+	# initialize queue with initial node from initial state
+	queue = []
+	explored = []
+	initial_node = Node(input_state, None, None)
+	queue.append(initial_node)
+
+	while True:
+
+		# exit if no solution was found
+		if len(queue) == 0:
+			with open(output_file_loc, "w") as f:
+				f.write("No solution found.")
+			break
+
+		# pop a node from the front of the queue
+		current_node = queue.pop()
+
+		# check if node is our goal
+		if is_goal_state(current_node, goal_state):
+			current_node.print_path(len(explored), output_file_loc)
+			break
+
+		# if not, expand all possible nodes, and if the previous action
+		# is moving a single animal, then we must move two animals
+		new_nodes = current_node.expand_node()  # add children to queue
+
+		for node in new_nodes:
+
+			if current_node.action == Action.ONE_CHICKEN \
+				or current_node.action == Action.ONE_WOLF:
+
+				if node.action == Action.TWO_CHICKENS \
+					or node.action == Action.TWO_WOLVES \
+					or node.action == Action.ONE_WOLF_ONE_CHICKEN:
+
+					queue.append(node)
+
+				else:
+					continue
+
+			queue.append(node)
+
+		print("\ndepth: " + str(current_node.path_cost))
+		explored.append(current_node)
 
 def load_puz_state(fn):
 	"""loads a text file as an initial state of the problem

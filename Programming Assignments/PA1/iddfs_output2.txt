@@ -1,4 +1,4 @@
-Total number of expanded nodes: 45
+Total number of expanded nodes: 322
 Length of solution: 31
 Move TWO_WOLVES to the left bank
 Move ONE_WOLF to right bank

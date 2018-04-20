@@ -1,33 +1,33 @@
-Total number of expanded nodes: 45
+Total number of expanded nodes: 368
 Length of solution: 31
-Move TWO_WOLVES to the left bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move TWO_CHICKENS to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
 Move ONE_WOLF to right bank
-Move TWO_WOLVES to the left bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_WOLF to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_WOLF to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_WOLF to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_WOLF to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move ONE_CHICKEN to right bank
+Move ONE_WOLF_ONE_CHICKEN to the left bank
 Move ONE_WOLF to right bank
 Move TWO_CHICKENS to the left bank
 Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
+Move TWO_WOLVES to the left bank
 Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_CHICKEN to right bank
-Move ONE_WOLF_ONE_CHICKEN to the left bank
-Move ONE_WOLF to right bank
 Move ONE_WOLF_ONE_CHICKEN to the left bank

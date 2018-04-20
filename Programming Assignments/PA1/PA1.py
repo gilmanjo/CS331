@@ -97,7 +97,6 @@ class Node(object):
 			new_node = Node(self.gen_ps(x), self, x, deepcopy(self.path_cost) + 1)
 			if self.is_valid_action(new_node.state):
 				new_node.state_history = new_node.parent.state_history + [new_node.state]
-				print(len(new_node.state_history))
 				children.append(new_node)
 
 		self.expanded = True
@@ -359,11 +358,74 @@ def dfs(input_state, goal_state, output_file_loc):
 		explored.append(current_node)
 
 def iddfs(input_state, goal_state, output_file_loc):
-	
-	# initialize queue with initial node from initial state
+
+	# continously increase the depth limit of our depth-first search
+	depth = 0
 	queue = []
-	initial_node = Node(input_state, None, None)
-	queue.append(initial_node)
+	explored = []
+	while True:
+
+		print("\ndepth: {}".format(depth))
+
+		# problem is a 3-tuple of format (node, queue, explored)
+		problem = dls(input_state, goal_state, depth, queue, explored)
+		queue = problem[1]
+		explored = problem[2]
+
+		# case all nodes have been expanded with no solution
+		if problem[0] == -1:
+			print("No solution found.")
+			with open(output_file_loc, "w") as f:
+				f.write("No solution found.")
+			break
+
+		# case all nodes at the depth limit have been expanded and there is
+		# no solution, but deepest nodes may still be expanded
+		elif problem[0] == 0:
+			depth += 1
+
+		# case the solution has been found
+		else:
+			problem[0].print_path(output_file_loc)
+			break
+
+def dls(input_state, goal_state, depth_limit, queue, explored):
+	"""depth-limited search
+	"""
+
+	# initialize queue with initial node from initial state
+	if len(queue) == 0 and len(explored) == 0:
+		initial_node = Node(input_state, None, None)
+		queue.append(initial_node)
+
+	final_lvl = []  # the nodes is the deepest level of our limit
+
+	while True:
+
+		# exit if no solution was found
+		if len(queue) == 0:
+			return (-1, queue, explored)
+
+		# pop a node from the front of the queue
+		current_node = queue.pop()
+
+		# check if node is our goal
+		if is_goal_state(current_node, goal_state):
+			return (current_node, queue, explored)
+
+		# if not, check if we are allowed to expand
+		if current_node.path_cost == depth_limit and len(queue) == 0:
+			final_lvl.append(current_node)  # re-add current node
+			return (0, final_lvl, explored)
+
+		# saving the deepest level of our tree saves redunandcy in re-checking
+		# all of the early, non-solution nodes
+		elif current_node.path_cost == depth_limit:
+			final_lvl.append(current_node)
+
+		else:
+			queue += current_node.expand_node()  # add children to queue
+			explored.append(current_node)
 
 def astar(input_state, goal_state, output_file_loc):
 	pass
